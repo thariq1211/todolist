@@ -36,6 +36,8 @@ function App(props) {
 	const { state, addTodo, initTodo } = props;
 	const { todolist } = state;
 	const [openAddModal, setOpenAddModal] = useState(false);
+	const [openEditModal, setOpenEditModal] = useState(false);
+	const [editData, setEditData] = useState({});
 	const [toast, setToast] = useState(false);
 
 	const onCloseAddModal = () => {
@@ -55,7 +57,20 @@ function App(props) {
 			setTimeout(() => setToast(false), 3000);
 		}
 	};
-	const sortTaskUnDone = () => {
+
+	const onOpenEditModal = (item) => {
+		return (ev) => {
+			setOpenEditModal((prev) => !prev);
+			setEditData(item);
+		};
+	};
+
+  const onCloseEditModal = () => {
+		setOpenEditModal((prev) => !prev);
+		setEditData({});
+	};
+
+  const sortTaskUnDone = () => {
 		const todolistundone = todolist.filter((item) => item.status === 0);
 		const convertdate = todolistundone.map((item) => ({
 			...item,
@@ -91,8 +106,17 @@ function App(props) {
 		};
 		intializefetchAPI();
 	}, []);
-	return (
+
+  return (
 		<Container maxWidth="md">
+			<Modal title="Edit Todo" open={openEditModal} onClose={onCloseEditModal}>
+				<ModalTodo
+					mode="edit"
+					title={editData.title}
+					description={editData.description}
+					status={editData.status}
+				/>
+			</Modal>
 			<Modal title="Add Todo" open={openAddModal} onClose={onCloseAddModal}>
 				<ModalTodo onsave={onsavemodaladd} mode="add" />
 			</Modal>
@@ -124,6 +148,7 @@ function App(props) {
 								? sortTaskUnDone().map((item) => (
 										<ListItem key={item.id}>
 											<TodoField
+												onClick={onOpenEditModal(item)}
 												status={item.status}
 												title={item.title}
 												description={item.description}
@@ -140,6 +165,7 @@ function App(props) {
 								? sortTaskDone().map((item) => (
 										<ListItem key={item.id}>
 											<TodoField
+												onClick={onOpenEditModal(item)}
 												status={item.status}
 												title={item.title}
 												description={item.description}
