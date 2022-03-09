@@ -46,8 +46,8 @@ export default function DetailTodo({
 		} else {
 			const data = {
 				title: todo.title === "" ? title : todo.title,
-				description: todo.description === "" ? description: todo.description
-			}
+				description: todo.description === "" ? description : todo.description,
+			};
 			onsave(data);
 		}
 	};
@@ -60,7 +60,7 @@ export default function DetailTodo({
 		<Grid
 			container
 			direction="column"
-      justify="flex-start"
+			justify="flex-start"
 			alignItems="flex-start"
 		>
 			<Grid md={11} style={styles.grid}>
@@ -82,7 +82,7 @@ export default function DetailTodo({
 				style={styles.grid}
 				container
 				direction="row"
-        justify="flex-start"
+				justify="flex-start"
 				alignItems="flex-start"
 			>
 				<Grid md={3} style={styles.button}>
