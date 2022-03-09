@@ -31,12 +31,17 @@ const connectApp = connect(
 			deleteTodo: (key) =>
 				dispatch({ type: actions.DELETE_TODO, payload: key }),
 			markDone: (key) => dispatch({ type: actions.MARK_DONE, payload: key }),
+			editTodo: (key, value) =>
+				dispatch({
+					type: actions.EDIT_TODO,
+					payload: { key, title: value.title, description: value.description },
+				}),
 		};
 	}
 );
 
 function App(props) {
-	const { state, addTodo, initTodo, deleteTodo, markDone } = props;
+	const { state, addTodo, initTodo, deleteTodo, markDone, editTodo } = props;
 	const { todolist } = state;
 	const [openAddModal, setOpenAddModal] = useState(false);
 	const [openEditModal, setOpenEditModal] = useState(false);
@@ -80,6 +85,14 @@ function App(props) {
 
 	const onmarkdone = () => {
 		markDone(editData.id);
+		onCloseEditModal();
+	};
+
+	const onsavemodaledit = (value) => {
+		editTodo(editData.id, {
+			title: value.title,
+			description: value.description,
+		});
 		onCloseEditModal();
 	};
 
@@ -127,6 +140,7 @@ function App(props) {
 					mode="edit"
 					ondelete={ondeletebutton}
 					ondone={onmarkdone}
+					onsave={onsavemodaledit}
 					title={editData.title}
 					description={editData.description}
 					status={editData.status}
