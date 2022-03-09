@@ -20,7 +20,7 @@ const reducer = (state = initialStore, action) => {
 		case actions.INIT_TODO:
 			return pushStorage({ ...state, todolist: action.payload });
 		case actions.ADD_TODO:
-      return pushStorage({
+			return pushStorage({
 				...state,
 				todolist: [
 					...state.todolist,
@@ -33,9 +33,26 @@ const reducer = (state = initialStore, action) => {
 					},
 				],
 			});
-case actions.MARK_DONE:
+		case actions.MARK_DONE:
+			const todolist = state.todolist;
+			const id = action.payload;
+			const { status } = todolist.find((item) => item.id === id);
+			const newValue = todolist.map((item) => {
+				return item.id === id
+					? { ...item, status: status === 1 ? 0 : 1 }
+					: item;
+			});
+			return pushStorage({
+				...state,
+				todolist: newValue,
+			});
 		case actions.EDIT_TODO:
 		case actions.DELETE_TODO:
+			const deleteTodos = {
+				...state,
+				todolist: state.todolist.filter((e) => e.id !== action.payload),
+			};
+			return pushStorage(deleteTodos);
 		default:
 			return pushStorage(state);
 	}

@@ -28,12 +28,15 @@ const connectApp = connect(
 			initTodo: (value) =>
 				dispatch({ type: actions.INIT_TODO, payload: value }),
 			addTodo: (value) => dispatch({ type: actions.ADD_TODO, payload: value }),
+			deleteTodo: (key) =>
+				dispatch({ type: actions.DELETE_TODO, payload: key }),
+			markDone: (key) => dispatch({ type: actions.MARK_DONE, payload: key }),
 		};
 	}
 );
 
 function App(props) {
-	const { state, addTodo, initTodo } = props;
+	const { state, addTodo, initTodo, deleteTodo, markDone } = props;
 	const { todolist } = state;
 	const [openAddModal, setOpenAddModal] = useState(false);
 	const [openEditModal, setOpenEditModal] = useState(false);
@@ -65,12 +68,22 @@ function App(props) {
 		};
 	};
 
-  const onCloseEditModal = () => {
+	const onCloseEditModal = () => {
 		setOpenEditModal((prev) => !prev);
 		setEditData({});
 	};
 
-  const sortTaskUnDone = () => {
+	const ondeletebutton = () => {
+		deleteTodo(editData.id);
+		onCloseEditModal();
+	};
+
+	const onmarkdone = () => {
+		markDone(editData.id);
+		onCloseEditModal();
+	};
+
+	const sortTaskUnDone = () => {
 		const todolistundone = todolist.filter((item) => item.status === 0);
 		const convertdate = todolistundone.map((item) => ({
 			...item,
@@ -107,11 +120,13 @@ function App(props) {
 		intializefetchAPI();
 	}, []);
 
-  return (
+	return (
 		<Container maxWidth="md">
 			<Modal title="Edit Todo" open={openEditModal} onClose={onCloseEditModal}>
 				<ModalTodo
 					mode="edit"
+					ondelete={ondeletebutton}
+					ondone={onmarkdone}
 					title={editData.title}
 					description={editData.description}
 					status={editData.status}
