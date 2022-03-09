@@ -8,10 +8,14 @@ import {
 	Grid,
 	List,
 	ListItem,
+	Snackbar,
+	Button,
 } from "@material-ui/core";
 
 import actions from "./reducers/actions";
 import TodoField from "./components/moleculs/ListTodo";
+import Modal from "./components/moleculs/Modal";
+import ModalTodo from "./components/ModalTodo";
 
 const connectApp = connect(
 	(state) => {
@@ -23,13 +27,34 @@ const connectApp = connect(
 		return {
 			initTodo: (value) =>
 				dispatch({ type: actions.INIT_TODO, payload: value }),
+			addTodo: (value) => dispatch({ type: actions.ADD_TODO, payload: value }),
 		};
 	}
 );
 
 function App(props) {
-	const { state } = props;
+	const { state, addTodo, initTodo } = props;
 	const { todolist } = state;
+	const [openAddModal, setOpenAddModal] = useState(false);
+	const [toast, setToast] = useState(false);
+
+	const onCloseAddModal = () => {
+		setOpenAddModal((prev) => !prev);
+	};
+
+	const onOpenAddModal = () => {
+		setOpenAddModal((prev) => !prev);
+	};
+
+	const onsavemodaladd = (value) => {
+		if (value.description !== "" && value.title !== "") {
+			addTodo(value);
+			setOpenAddModal((prev) => !prev);
+		} else {
+			setToast(true);
+			setTimeout(() => setToast(false), 3000);
+		}
+	};
 	const sortTaskUnDone = () => {
 		const todolistundone = todolist.filter((item) => item.status === 0);
 		const convertdate = todolistundone.map((item) => ({
@@ -59,7 +84,7 @@ function App(props) {
 					method: "GET",
 				});
 				const response = await request.json();
-				props.initTodo(response);
+				initTodo(response);
 			} catch (error) {
 				console.error(error);
 			}
@@ -68,11 +93,30 @@ function App(props) {
 	}, []);
 	return (
 		<Container maxWidth="md">
+			<Modal title="Add Todo" open={openAddModal} onClose={onCloseAddModal}>
+				<ModalTodo onsave={onsavemodaladd} mode="add" />
+			</Modal>
 			<center>
 				<Typography variant="h4">Todo-list App</Typography>
 			</center>
 			<FormGroup>
 				<Grid container spacing={2}>
+					<Snackbar
+						anchorOrigin={{ vertical: "top", horizontal: "right" }}
+						open={toast}
+						message="Input Todo Properly!"
+						key={`bottom + center`}
+					/>
+					<Grid item xs={12} md={12}>
+						<Button
+							fullWidth
+							variant="outlined"
+							color="primary"
+							onClick={onOpenAddModal}
+						>
+							Add
+						</Button>
+					</Grid>
 					<Grid item xs={12} md={12}>
 						<Typography variant="body1">Task undone</Typography>
 						<List dense>

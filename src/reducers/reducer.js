@@ -1,5 +1,14 @@
 import initialStore from "./store";
 import actions from "./actions";
+import moment from "moment";
+
+const getRandomInt = () => {
+	return Math.floor(Math.random() * Math.floor(999));
+};
+
+const timestamp = () => {
+	return moment().format("YYYY-MM-DD HH:MM");
+};
 
 const pushStorage = (value) => {
 	localStorage.setItem("todos", JSON.stringify(value));
@@ -11,7 +20,20 @@ const reducer = (state = initialStore, action) => {
 		case actions.INIT_TODO:
 			return pushStorage({ ...state, todolist: action.payload });
 		case actions.ADD_TODO:
-		case actions.MARK_DONE:
+      return pushStorage({
+				...state,
+				todolist: [
+					...state.todolist,
+					{
+						id: getRandomInt(),
+						title: action.payload.title,
+						description: action.payload.description,
+						status: 0,
+						createdAt: timestamp(),
+					},
+				],
+			});
+case actions.MARK_DONE:
 		case actions.EDIT_TODO:
 		case actions.DELETE_TODO:
 		default:
