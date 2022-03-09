@@ -47,6 +47,14 @@ const reducer = (state = initialStore, action) => {
 				todolist: newValue,
 			});
 		case actions.EDIT_TODO:
+			const currentState = state.todolist;
+			const payload = action.payload;
+			const newState = currentState.map((item) => {
+				return item.id === payload.key
+					? { ...item, title: payload.title, description: payload.description }
+					: item;
+			});
+			return pushStorage({ ...state, todolist: newState });
 		case actions.DELETE_TODO:
 			const deleteTodos = {
 				...state,
