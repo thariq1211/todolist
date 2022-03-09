@@ -9,6 +9,7 @@ const pushStorage = (value) => {
 const reducer = (state = initialStore, action) => {
 	switch (action.type) {
 		case actions.INIT_TODO:
+			return pushStorage({ ...state, todolist: action.payload });
 		case actions.ADD_TODO:
 		case actions.MARK_DONE:
 		case actions.EDIT_TODO:
